@@ -18,6 +18,8 @@
 4. если хотим добавить таблицы, то прописываем в env SPREADSHEET_IDS и прогоняем миграции, либо руками в таблицу
 5. в остальном все команды которые были в шаблоне исправно работают и запускают как локально так и через докер
 6. менять время запуска тарифов здесь src/constants/jobs.ts
+7. ссылки на таблицы для просмотра https://docs.google.com/spreadsheets/d/157mO6atNjyVMt0J65Lu2grOJletU-ZxFQ5xXFuXXQBw/edit?usp=sharing
+  https://docs.google.com/spreadsheets/d/1C7Xnq2wL2BiSUZvfIfRqtZcAYQ44fM5oZGwkpNqgMs8/edit?usp=sharing
 
 ## Команды:
 
