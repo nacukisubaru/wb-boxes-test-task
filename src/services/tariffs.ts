@@ -11,15 +11,12 @@ import { updateTariffsInSheets } from './spreadsheets.js';
  * updates the data in Google Sheets, and saves them to the database.
  */
 export async function fetchAndSaveTariffs(): Promise<void> {
-  let tariffs;
+  const today = new Date().toISOString().slice(0, 10);
 
-  try {
-    tariffs = await getBoxTariffs(new Date().toISOString().slice(0, 10));
-  } catch (error) {
-    throw error;
-  }
+  const tariffs = await getBoxTariffs(today);
 
   const rows: TariffRow[] = tariffs.map((t) => ({
+    created_at: today,
     geo_name: t.geoName || null,
     warehouse_name: t.warehouseName,
 
@@ -36,14 +33,14 @@ export async function fetchAndSaveTariffs(): Promise<void> {
     box_storage_liter: parseNumber(t.boxStorageLiter),
   }));
 
-  try {
-    await updateTariffsInSheets(rows);
-  } catch (err) {
-    throw err;
-  }
-
   await knex<TariffRow>('tariffs')
     .insert(rows)
-    .onConflict(['warehouse_name', 'geo_name'])
+    .onConflict(['created_at', 'warehouse_name', 'geo_name'])
     .merge();
+
+  const dbRows = await knex('tariffs')
+    .where('created_at', today)
+    .orderByRaw('box_delivery_coef_expr ASC NULLS LAST');
+
+  await updateTariffsInSheets(dbRows);
 }
