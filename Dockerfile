@@ -21,4 +21,11 @@ WORKDIR /app
 
 COPY --from=build /app/package*.json .
 COPY --from=deps-prod /app/node_modules ./node_modules
+
+# copying build and migrations
 COPY --from=build /app/dist ./dist
+COPY ./src/postgres/migrations ./dist/postgres/migrations
+
+ENV NODE_ENV=production
+
+CMD ["node", "dist/app.js"]
